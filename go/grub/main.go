@@ -92,16 +92,6 @@ func main() {
         "http://www.bz55.com/meinvbizhi/38818.html",
         "http://www.bz55.com/meinvbizhi/38726.html",
         "http://www.bz55.com/meinvbizhi/38444.html",
-        "http://www.bz55.com/meinvbizhi/38365.html",
-        "http://www.bz55.com/meinvbizhi/38039.html",
-        "http://www.bz55.com/meinvbizhi/25443.html",
-        "http://www.bz55.com/meinvbizhi/37989.html",
-        "http://www.bz55.com/meinvbizhi/37692.html",
-        "http://www.bz55.com/meinvbizhi/37359.html",
-        "http://www.bz55.com/meinvbizhi/36985.html",
-        "http://www.bz55.com/meinvbizhi/36876.html",
-        "http://www.bz55.com/meinvbizhi/36898.html",
-        "http://www.bz55.com/meinvbizhi/36741.html",
     }
 
 	go outCacheChannel()
