@@ -90,5 +90,5 @@ func main() {
 	http.HandleFunc("/shutdown", shutdown)
 	http.HandleFunc("/reboot", reboot)
 	http.HandleFunc("/showMenu", showMenu)
-	http.ListenAndServe(":8888", nil)
+	http.ListenAndServe(":7777", nil)
 }
