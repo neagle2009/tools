@@ -18,41 +18,34 @@ const (
 
 func menuListHtml() string {
     return  `
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-<title>Hi</title>
-<style type="text/css">
-a {
-    font-size:4em;                                                                                                                                                                            
-    padding:5px;
-    margin:5px;
-    line-height:1.5em;
-    font-family:"Courier New";
-}
-
-a:link { text-decoration: none;color: blue}
-a:active { text-decoration:blink}
-a:hover { text-decoration:underline;color: red} 
-a:visited { text-decoration: none;color: green}
-
-div#content {
-    padding:10em 20em;
-}
-</style>
-</head>
-<body>
-    <script type="text/javascript">
-        function goto(action) {
-            msg = "Are you sure " + action + "?"
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> Hi </title>
+<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+<script src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    function goto(action) {
+        msg = "Are you sure " + action + "?"
             if(confirm(msg)) {
-               location.href = "/" + action; 
+                location.href = "/" + action; 
             }
-        }
-    </script>
-    <div id="content">
-        <a href="javascript:void(0);" onclick="goto('shutdown');">shutdown</a>
-        <a href="javascript:void(0);" onclick="goto('reboot');">reboot</a>
-    </div>
+    }
+</script>
+</head>
+<body style="padding: 50% 3em;">
+    <p class="text-center">
+        <button type="button" class="btn btn-primary btn-lg btn-block glyphicon glyphicon-off btn-danger" onclick="goto('shutdown');"> shutdown </button>
+    </p>
+    <p class="text-center"> </p>
+    <p class="text-center">
+        <button type="button" class="btn btn-primary btn-lg btn-block glyphicon glyphicon-refresh btn-success" onclick="goto('reboot');"> reboot </button>
+    </p>
 </body>
 </html>
 `
@@ -113,42 +106,35 @@ func inputPwdFormHtml(title string) string {
         title = ""
     }
     return  `
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-<title>Please input AuthCoe</title>
-<style type="text/css">
-label, input {
-    font-size:4em;
-    padding:5px;
-    margin:5px;
-    line-height:1.5em;
-    font-family:"Courier New";
-    width: 10em;
-    height:1.8em;
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> Please input auth code </title>
+<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+<script src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+function formCheck() {
+    password = document.getElementById("password").value;
+    if(password == "") {
+        alert("please input password");
+        return false;
+    }
+    return true;
 }
-div#content {
-    padding:20%;
-}
-</style>
+</script>
 </head>
-<body>
-    <script type="text/javascript">
-        function formCheck() {
-            password = document.getElementById("password").value;
-            if(password == "") {
-                alert("please input password");
-                return false;
-            }
-            return true;
-        }
-    </script>
-    <div id="content">
+<body style="padding: 50% 3em;">
         <form action="" method="POST">
-            <label for="password">password: </label>
-            <input name="password" type="text" id="password" />
-            <input name="submit" type="submit" value="Submit" onClick="return formCheck();"  />
+        <div class="form-group">
+            <input name="password" class="form-control" type="text" placeholder="auth code" id="password" />
+        </div>
+        <button type="submit" class="btn btn-default" onClick="return formCheck();" >Submit</button>
         </form>
-    </div>
 </body>
 </html>
 `
