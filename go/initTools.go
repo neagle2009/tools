@@ -12,13 +12,17 @@ import (
 )
 
 const (
-    DATETIME_TEMPLATE = "2006-01-02 15:04:05"
-    AUTH_KEY = "999"
+	DATETIME_TEMPLATE = "2006-01-02 15:04:05"
+	AUTH_KEY          = ""
+
+	INIT_SHUTDOWN_CODE = "0"
+	INIT_REBOOT_CODE   = "6"
+
+	LISTEN_PORT = "7777"
 )
 
 func menuListHtml() string {
-    return  `
-<!DOCTYPE html>
+	return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -58,54 +62,58 @@ func showMenu(w http.ResponseWriter, r *http.Request) {
 }
 
 func reboot(w http.ResponseWriter, r *http.Request) {
-    if(AUTH_KEY == "" || authCheck(w, r)) {
-	w.Write([]byte("<h1>rebooting... </h1>"))
-	fmt.Println("reboot time:\t", time.Now().Format(DATETIME_TEMPLATE))
-	cmd := exec.Command("/usr/bin/sudo", "/sbin/init", "6")
+	if AUTH_KEY == "" || authCheck(w, r) {
+		w.Write([]byte("<h1>rebooting... </h1>"))
+		fmt.Println("reboot time:\t", time.Now().Format(DATETIME_TEMPLATE))
+		go initRun(INIT_REBOOT_CODE)
+	}
+}
+
+func initRun(c string) {
+	//time.Sleep(1 * time.Second)
+	cmd := exec.Command("/usr/bin/sudo", "/sbin/init", c)
 	cmd.Run()
-    }
 }
 
 func shutdown(w http.ResponseWriter, r *http.Request) {
-    if(AUTH_KEY == "" || authCheck(w, r)) {
-	w.Write([]byte("<h1>shutdown .... </h1>"))
-	fmt.Println("shutdown time:\t", time.Now().Format(DATETIME_TEMPLATE))
-	cmd := exec.Command("/usr/bin/sudo", "/sbin/init", "0")
-	cmd.Run()
-    }
+	if AUTH_KEY == "" || authCheck(w, r) {
+		w.Write([]byte("<h1>shutdown .... </h1>"))
+		fmt.Println("shutdown time:\t", time.Now().Format(DATETIME_TEMPLATE))
+		go initRun(INIT_SHUTDOWN_CODE)
+	}
 }
 
 func testExample(w http.ResponseWriter, r *http.Request) {
-    if(AUTH_KEY == "" || authCheck(w, r)) {
-        fmt.Println("now:\t", time.Now().Format(DATETIME_TEMPLATE))
-            cmd := exec.Command("/bin/ls", "-l", "/", "/home/neagle")
-            var out bytes.Buffer
-            cmd.Stdout = &out
-            err := cmd.Run()
-            if err != nil {
-                fmt.Println("failed.")
-            }
-        fmt.Println(out.String())
-    }
+	if AUTH_KEY == "" || authCheck(w, r) {
+		fmt.Println("now:\t", time.Now().Format(DATETIME_TEMPLATE))
+		cmd := exec.Command("/bin/ls", "-l", "/", "/home/neagle")
+		var out bytes.Buffer
+		cmd.Stdout = &out
+		err := cmd.Run()
+		if err != nil {
+			fmt.Println("failed.")
+		}
+		fmt.Println(out.String())
+	}
 }
 
 func authCheck(w http.ResponseWriter, r *http.Request) bool {
-    pwd := r.PostFormValue("password");
-    if(pwd == "") {
-        w.Write([]byte(inputPwdFormHtml("")));
-        return false;
-    } else if(pwd != AUTH_KEY) {
-        w.Write([]byte(inputPwdFormHtml("")));
-        return false;
-    }
-    return true
+	pwd := r.PostFormValue("password")
+	if pwd == "" {
+		w.Write([]byte(inputPwdFormHtml("")))
+		return false
+	} else if pwd != AUTH_KEY {
+		w.Write([]byte(inputPwdFormHtml("")))
+		return false
+	}
+	return true
 }
 
 func inputPwdFormHtml(title string) string {
-    if(title == "") {
-        title = ""
-    }
-    return  `
+	if title == "" {
+		title = ""
+	}
+	return `
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -145,5 +153,5 @@ func main() {
 	http.HandleFunc("/reboot", reboot)
 	http.HandleFunc("/showMenu", showMenu)
 	http.HandleFunc("/test", testExample)
-	http.ListenAndServe(":7777", nil)
+	http.ListenAndServe(":"+LISTEN_PORT, nil)
 }
