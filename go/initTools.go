@@ -113,8 +113,7 @@ func inputPwdFormHtml(title string) string {
 	if title == "" {
 		title = ""
 	}
-	return `
-<!DOCTYPE html>
+	return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
