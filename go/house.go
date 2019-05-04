@@ -4,19 +4,18 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
-	_ "io"
 	"io/ioutil"
 	"log"
-	_ "net/http"
 	"net/mail"
 	"net/smtp"
 	"net/url"
 	"os"
-	_ "path/filepath"
 	"strconv"
-	_ "strings"
+	"strings"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
+	qcloudsms "github.com/qichengzx/qcloudsms_go"
 )
 
 const (
@@ -26,7 +25,7 @@ const (
 
 	DATA_FILE = "/home/neagle/house.json"
 	SMTP_USER = "itisasecretbaby@163.com"
-	SMTP_PASS = "130910*******" //注意修改密码  @TODO
+	SMTP_PASS = "130910*******"
 	SMTP_HOST = "smtp.163.com"
 	SMTP_PORT = "25"
 
@@ -54,6 +53,13 @@ const (
 `
 )
 
+var (
+	appid     string = "1400207**"
+	appkey    string = "d1d70b6fc1853bcf107258cdc723b***"
+	sign      string = "五毛的技术"
+	phoneList string = "1760069***,17090097***"
+)
+
 type House struct {
 	Name string `json:"name"`
 	Href string `json:"href"`
@@ -77,6 +83,7 @@ func main() {
 
 	if NeedNotice(doc) {
 		SendToMail(NOTICE_EMAIL, fmt.Sprintf(SUCCESS_TITLE, grubNum), SUCCESS_BODY, SUCCESS_MIME)
+		MultiSend([]string{"金石小区"}, strings.Split(phoneList, ","))
 		return
 	}
 
@@ -164,6 +171,29 @@ func SendToMail(toEmail, subject, body, mailType string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func MultiSend(params []string, tl []string) {
+	opt := qcloudsms.NewOptions(appid, appkey, sign)
+	opt.Debug = true
+
+	var Tel []qcloudsms.SMSTel
+	st := Tel[:]
+	for _, tel := range tl {
+		st = append(st, qcloudsms.SMSTel{Nationcode: "86", Mobile: tel})
+	}
+
+	var client = qcloudsms.NewClient(opt)
+
+	var sm = qcloudsms.SMSMultiReq{
+		Type:   0,
+		Params: params,
+		Tel:    st,
+		TplID:  324359, //有参数
+		Sign:   sign,
+	}
+
+	client.SendSMSMulti(sm)
 }
 
 func logOut(s string) {
