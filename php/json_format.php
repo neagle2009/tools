@@ -5,11 +5,24 @@ error_reporting(E_ALL);
 const ERR_EXIT = 1;
 const ERR_NON_EXIT = 0;
 
-const JSON_DECODE_RESULT_TYPE_ARRAY = true;
-const JSON_DECODE_RESULT_TYPE_OBJECT = false;
+$aOptions = [
+	'f:',
+	'a::',
+	'h',
+];
+$aLongOptions = [
+	'file:',
+	'toarray::',
+	'help',
+];
 
-$sJsonFile = $argv[1] ?? '';
+$aInputParam = getopt(implode('', $aOptions), $aLongOptions);
+if (empty($aInputParam) || key_exists('h', $aInputParam) || key_exists('help', $aInputParam)) {
+	showHelp();
+}
 
+
+$sJsonFile = $aInputParam['f'] ?? ($aInputParam['file'] ?? '');
 
 if (strlen($sJsonFile) == 0) {
 	errMsg("Please input json file");
@@ -28,13 +41,12 @@ if (empty($sJson)) {
 	errMsg("Json file is empty !!!");
 }
 
-if ($argv[2] ?? 1) {
-	$bJsonDecodeResultType = JSON_DECODE_RESULT_TYPE_ARRAY;
-} else {
-	$bJsonDecodeResultType = JSON_DECODE_RESULT_TYPE_OBJECT;
+$bJsonDecodeResultTypeArray = false;
+if ((isset($aInputParam['a']) && $aInputParam['a']) || (isset($aInputParam['toarray']) && $aInputParam['toarray'])) {
+	$bJsonDecodeResultTypeArray = true;
 }
 
-$mJson = json_decode($sJson, $bJsonDecodeResultType);
+$mJson = json_decode($sJson, $bJsonDecodeResultTypeArray);
 
 if (NULL === $mJson) {
 	errMsg("Decode json error!");
@@ -48,3 +60,17 @@ function errMsg($sMsg, $iExit = ERR_EXIT) {
 	$iExit && exit();
 }
 
+function showHelp() {
+	$sFname = __FILE__;
+	echo <<<HELP
+
+	php $sFname -f jsonFile -a resultTypeArray
+
+-f, --file			json file
+-a, --toarray		out put json convert to array
+-h, --help			show this message
+
+
+HELP;
+	exit;
+}
