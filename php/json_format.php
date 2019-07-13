@@ -48,8 +48,8 @@ if ((isset($aInputParam['a']) && $aInputParam['a']) || (isset($aInputParam['toar
 
 $mJson = json_decode($sJson, $bJsonDecodeResultTypeArray);
 
-if (NULL === $mJson) {
-	errMsg("Decode json error!");
+if (NULL === $mJson || json_last_error() != JSON_ERROR_NONE) {
+	errMsg("Decode json error! json_error:".json_last_error_msg());
 }
 
 //注: 一些老版本不支持 后面的参数列表
